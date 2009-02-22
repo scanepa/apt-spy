@@ -34,7 +34,10 @@ char *ltrim(char *s, const int d) {
   
 	char *t= s;
 
-	while(*t==d) t++;
+	if (d == ' ')
+		while(*t==' ' || *t=='\t' || *t=='\r' || *t=='\n') t++;
+	else
+		while(*t==d) t++;
 	if(t!=s) {
 		char *r= s;
 		do {
@@ -59,7 +62,10 @@ char *rtrim(char *s, const int d) {
 
 
 	while(*s) s++;
-	while(*--s==d) *s= 0;
+	if (d == ' ')
+		while(*--s==' ' || *s=='\t' || *s=='\r' || *s=='\n') *s= 0;
+	else
+		while(*--s==d) *s= 0;
 	return t;
 
 }

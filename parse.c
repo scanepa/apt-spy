@@ -57,10 +57,11 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 	char *inputline;	/* The line that will be written to config_p */
 	char *country_code;	/* where we put the country code */
 	int infilePos;
-	char *alias;
+	char *dirs;
 	char *aliasList;
 	char *dst;
 	char *mirrorData;
+	char *token;
 	
 	/* Uppercase area */
 	str_toupper(area);
@@ -151,11 +152,11 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 			/* if the line does not begin with "  (" */
 			if (strstr(inputline, "  (") == NULL) {
 /*			if(!isspace(*inputline)) { */
+				/* get position of infile_p */
+				infilePos = ftell(infile_p);		
 				/* We now write the line to the temporary file */	
 				fputs(inputline, infile_p);
 				free(inputline);
-				/* get position of infile_p */
-				infilePos = ftell(infile_p);		
 	
 				if ((ferror(infile_p)) != 0) { 	/* Check for file error */
 					free(line);
@@ -181,14 +182,17 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 				/* split aliasList into token and concat them with the info
 				   extracted from inputline */
 				/* mirrorData contains all the line except the mirror name */
-				alias = strtok(mirrorData, ":");
-				token = strtok(aliasList);
-				
+				dirs = strstr(mirrorData, ":"); /* strtok(mirrorData, ":"); */
+				token = strtok(aliasList, ", ");
+
 				/* record this info into infile */
 				while (token != NULL) {
-					strcpy(dst,token);
-					strcat(dst,mirrorData);
-					printf("%s\n", dst);
+					dst = (char *)calloc(strlen(token) + strlen(mirrorData) + 1,
+										 sizeof(char));
+					strcpy(dst, token);
+					strcat(dst, dirs);
+					fputs(dst, infile_p);
+					token = strtok(NULL, ", ");					
 				}
 				
 			}
@@ -367,9 +371,9 @@ char *get_mirrors(FILE *mirror_list)
 	 * If the line begins with a "  (" it's a mirror alias so we need to
 	 * continue some way
 	 */	
-	/* if (strstr(line, "  ("))
-		return " ";
-	*/
+	if (strstr(line, "  ("))
+		return save_line;
+	
 	/*
 	 * If the line begins with a space, we assume it is empty and the list
 	 * is exhausted.
@@ -591,32 +595,3 @@ char *str_toupper(char *str)
 	}
 	return str;
 }
-
-#define WHITESPACE_CHARS  " \f\n\r\t\v"
-
-
-char *
-trim(char *string)
-{
-    char *result = NULL, *ptr = NULL;
-
-    /* Ignore NULL pointers.  */
-    if (string)
-    {
-        ptr = string;
-        /* Skip leading whitespace.  */
-        while (strchr(WHITESPACE_CHARS, *ptr))
-            ++ptr;
-        /* Make a copy of the remainder.  */
-        result = strdup(ptr);
-        /* Move to the last character of the copy (that is, until the NULL char is reached).  */
-        for (ptr = result; *ptr; ptr++);
-        /* Move to the last non-whitespace character of the copy.  */
-        for (--ptr; strchr(WHITESPACE_CHARS, *ptr); --ptr);
-        /* Remove trailing whitespace. */
-        *(++ptr) = '\0';
-    }
-
-    return result;
-}
-
