@@ -1,35 +1,10 @@
-/*
- * Copyright (C), 2008, 2009 by Stefano Canepa <sc@linux.it>
- * All Rights Reserved.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /* (c) Steven Holmes, 2003.
- * (c) Stefano Canepa <sc@linux.it>, 2008
+ * (c) Stefano Canepa <sc@linux.it>, 2008,2009
  *
- * This software was licensed as detailed in the COPYRIGHT.old file
- * as of 22nd Feb 2009 it is licensed under the license specified
- * into the header of this file
+ * This software is licensed as detailed in the COPYRIGHT file
  */
 
 /* This file is a bit icky */
-
-/*
- * Moved to the .h file
- */
-/* char *str_toupper(char *str); */
 
 #include <stdio.h>
 #include <assert.h>
@@ -178,7 +153,6 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 				aliasList = trim(inputline,' ');
 				aliasList = ltrim(aliasList,'(');
 				aliasList = rtrim(aliasList,')');
-				
 				/* split aliasList into token and concat them with the info
 				   extracted from inputline */
 				/* mirrorData contains all the line except the mirror name */

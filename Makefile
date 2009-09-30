@@ -1,5 +1,5 @@
 CC = cc
-CFILES = benchmark.c  file.c  protocol.c  main.c  parse.c update.c trim.c
+CFILES = benchmark.c  file.c  protocol.c  main.c  parse.c update.c
 CFLAGS = -lcurl -Wall -pedantic-errors
 DEBUG = -g
 TARGET = apt-spy

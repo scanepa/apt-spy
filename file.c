@@ -1,6 +1,6 @@
 /* 
  * apt-spy (c) Steven Holmes, 2003.
- * (c) Stefano Canepa <sc@linux.it>, 2008
+ * (c) Stefano Canepa <sc@linux.it>, 2008, 2009
  * This software is licensed as detailed in the COPYRIGHT file
  */
 
@@ -17,7 +17,13 @@
 #include "include/global.h"
 #include "include/file.h"
 
-/* Selects an infile */
+/** 
+ * @brief Selects an infile 
+ * 
+ * @param infile 
+ * 
+ * @return file pointer of the read access opened file 
+ */
 FILE *select_infile(char *infile)
 {
 	if (infile != NULL)
@@ -27,8 +33,14 @@ FILE *select_infile(char *infile)
 	return tmpfile();
 }
 
-/* Selects an output file */
 
+/** 
+ * @brief Selects an output file
+ * 
+ * @param outfile 
+ * 
+ * @return file pointer to the write access opened file
+ */
 FILE *select_outfile(char *outfile)
 {
 	FILE *fp;
@@ -47,18 +59,17 @@ FILE *select_outfile(char *outfile)
 	return fp;
 }
 
-/*
- * Open configuration file
+/** 
+ * @brief Open configuration file
+ * 
+ * @param config_file 
+ * 
+ * @return 
  */
-
 FILE *select_config(char *config_file)
 {
 	FILE *fp;
 	
-/*
-  if (config_file == NULL)
-		config_file = d_config;
-*/	
 	fp = fopen(config_file, "r");
 	
 	return fp;
@@ -78,8 +89,12 @@ FILE *select_mirror(char *mirror_list, int are_updating)
 	
 	return fp;
 }
-/*
- *
+/** 
+ * @brief Get the next line of infile_p 
+ * 
+ * @param infile_p 
+ * 
+ * @return The next line
  */
 char *next_entry(FILE *infile_p)
 {
@@ -128,10 +143,13 @@ char *next_entry(FILE *infile_p)
 	return temp;
 }
 
-/*
- * If orig_file exists, copy it to a new file with ".bak" appended 
- * Upon error, "1" is returned
-*/
+/** 
+ * @brief Copy orig_file into a new file named as orig_file with ".bak" appended
+ * 
+ * @param orig_file 
+ * 
+ * @return Upon error, "1" is returned 
+ */
 int backup(char *orig_file)
 {
 	FILE *in_file, *out_file;
@@ -185,3 +203,14 @@ int backup(char *orig_file)
 	free(new_name);
 	return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
