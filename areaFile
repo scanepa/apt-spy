@@ -1,0 +1,127 @@
+Africa:
+ZA
+
+Asia:
+
+CN
+HK
+ID
+IL
+IN
+JP
+KR
+RU
+SG
+TH
+TR
+TW
+
+Europe:
+
+AT
+BE
+BG
+BY
+CH
+CZ
+DE
+DK
+EE
+ES
+FI
+FR
+GB
+GR
+HR
+HU
+IE
+IS
+IT
+LT
+LU
+LV
+NL
+NO
+PL
+PT
+RO
+RU
+SE
+SI
+SK
+TR
+UA
+
+North-America:
+
+CA
+US
+MX
+
+Oceania:
+
+AU
+NZ
+
+South-America:
+
+CR
+BR
+CL
+NI
+
+All:		# List of all countries
+
+AT		# Austria
+AU		# Australia
+BE		# Belgium
+BG		# Bulgaria
+BR		# Brazil
+BY		# Belarus
+CA		# Canada
+CH		# Switzerland
+CL		# Chile
+CN		# China
+CR		# Costa Rica
+CZ		# Czech Republic
+DE		# Germany
+DK		# Denmark
+EE		# Estonia
+ES		# Spain
+FI		# Finland
+FR		# France
+GB		# United Kingdom
+GR		# Greece
+HK		# Hong Kong
+HR		# Croatia
+HU		# Hungary
+ID		# Indonesia
+IE		# Ireland
+IL		# Israel
+IN		# India
+IS		# Iceland
+IT		# Italy
+JP		# Japan
+KR		# Korea
+LT		# Lithuania
+LU		# Luxembourg
+LV		# Latvia
+MX		# Mexico
+NI		# Nicaragua
+NL		# Netherlands
+NO		# Norway
+NZ		# New Zealand
+PL		# Poland
+PT		# Portugal
+RO		# Romania
+RU		# Russia
+SE		# Sweden
+SG		# Singapore
+SI		# Slovenia
+SK		# Slovakia
+TH		# Thailand
+TR		# Turkey
+TW		# Taiwan
+UA		# Ukraine
+US		# United States
+ZA		# South Africa

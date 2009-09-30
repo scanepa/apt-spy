@@ -1,6 +1,7 @@
 /*
  * apt-spy (c) Steven Holmes, 2003.
- * This software is licensed as detailed in the LICENSE file.
+ * Stefano Canepa <sc@linux.it>, 2008, 2009
+ * This software was licensed as detailed in the LICENSE file.
  */
 
 #ifndef __GLOBAL_H
@@ -15,7 +16,7 @@ extern char d_mirror[];
 /* Defaults values */
 
 /* Our version number. */
-#define	apt_spy_v	"v3.2.2"
+#define	apt_spy_v	"v3.2.1"
 
 /* The default area */
 #define	D_AREA		"All"
@@ -23,7 +24,7 @@ extern char d_mirror[];
 /* Default file locations */
 #define D_OUT           "/etc/apt/sources.list.d/apt-spy.list"
 #define D_CONFIG        "/etc/apt-spy.conf"
-#define D_MIRROR        "/var/cache/apt-spy/mirrors.txt"
+#define D_MIRROR        "/var/cache/apt/mirrors.txt"
 
 /* Default file to grab when benchmarking */
 #define D_FILE  	"ls-lR.gz"

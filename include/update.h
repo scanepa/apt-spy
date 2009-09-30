@@ -1,4 +1,7 @@
-/* apt-spy (c) Steven Holmes, 2003. This software is licensed as detailed in the LICENSE file. */
+/* apt-spy (c) Steven Holmes, 2003.
+ *         (c) Stefano Canepa, 2008, 2009
+ * This software is licensed as detailed in the LICENSE file.
+ */
 
 #ifndef __UPDATE_H
 #define __UPDATE_H

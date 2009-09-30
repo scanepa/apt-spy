@@ -1,0 +1,7 @@
+-Re-write the whole bloody thing :P
+
+-Fiddle with server_t and functions that use it so that all entries can be
+of arbitrary size.
+
+-Look into mmap for file I/O.
+
