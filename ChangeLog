@@ -1,0 +1,21 @@
+2009-02-22  Stefano Canepa  <sc@galletto.canepa.home>
+
+
+2009-02-22  Stefano Canepa  <sc@linux.it>
+
+	* parse.c (build_area_file): Modified to use real mirrors site
+	instead of ftp.xx.debian.org
+	* trim.c (ltrim): new function to trim spaces or specified char
+	from left
+	* trim.c (rtrim): same as ltrim but on right
+	* trim.c (trim): call ltrim and rtrim
+
+Sun Aug 24 16:42:41 2008  Stefano Canepa  <sc@linux.it>
+
+	* file.c (next_entry): Modified to manage last line without \n
+			       (Closes: #447232)
+
+Sat Aug 23 19:22:18 2008  Stefano Canepa  <sc@linux.it>
+
+	* parse.c (get_mirrors): Added control if next_entry returns NULL
+

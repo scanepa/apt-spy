@@ -1,0 +1,151 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH APT-SPY 8 "17th June, 2003"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+apt-spy \- program to generate a /etc/apt/sources.list file
+.SH SYNOPSIS
+.BR apt-spy " -d " \fIdistribution\fP 
+.RB " [ " "-a " \fIarea\fP 
+.RB "] [ " "-c " \fIconfig\fP 
+.RB "] [ " "-e " \fInumber\fP 
+.RB "] [ " "-f " \fIfile\fP 
+.RB "] [ " "-i " \fIfile\fP 
+.RB "] [ " "-m " \fImirror-list\fP 
+.RB "] [ " "-o " \fIoutput-file\fP 
+.RB "] [ " "-p " \fIproxy\fP
+.RB "] [ " "-s " \fIcountry-list\fP
+.RB "] [ " "-t " \fItime\fP
+.RB "] [ " "-u " \fIupdate-URL\fP
+.RB "] [ " "-w " file
+.RB "] [ " "-n " number
+.RB "] [ " "-h "
+.RB "] [ " "-v "
+.RB "] [ " "update " "]"
+
+.SH DESCRIPTION
+This manual page documents briefly the
+.B apt-spy
+command.
+.PP
+.\" TeX users may be more comfortable with the \fB<whatever>\fP and
+.\" \fI<whatever>\fP escape sequences to invoke bold face and italics, 
+.\" respectively.
+\fBapt-spy\fP is a program that tests a series of Debian archive mirrors for
+bandwith.
+It writes to \fI/etc/apt/sources.list.d/apt-spy.list\fP the fastest server.
+.PP
+You can select which of the many Debian sites to benchmark by geographical
+location.
+
+.SH OPTIONS
+.TP
+.BI -d " distribution" 
+Debian distribution to use. Sensible values would be `stable', `testing'
+or `unstable'. Distribution names can also be used.
+This value is directly used in the generated sources.list, and is required
+unless updating.
+.TP
+.BI -a " area"
+This will cause only servers in the specified area to be benchmarked. 
+By default, valid values for \fIarea\fP are `Africa', `Asia', `Europe',
+`North-America', `Oceania' and `South-America'.
+It is very easy to define your own areas or subset of servers to benchmark.
+For further details see \fBapt-spy.conf\fP(5).
+.TP
+.BI -c " config"
+configuration file to use instead of \fI/etc/apt-spy.conf.
+.TP
+.BI -e " number"
+`early finish'.
+Stop benchmarking after \fInumber\fP of servers have been completed.
+Act as if all servers were benchmarked upon completion.
+.TP
+.BI -f " file"
+\fIfile\fP to grab from the Debian servers.
+By default \fBapt-spy\fP will test the servers by getting part of the
+`ls-lR' file in the base of the Debian tree on the mirror.
+This tells \fBapt-spy\fP to get \fBfile\fP instead. 
+It is assumed that this file is also relative to the Debian base directory.
+.TP
+.BI -i " file"
+use \fBfile\fP as input for \fBapt-spy\fP. 
+You should generate this input file using the \-w option.
+.TP
+.BI -m " mirror-list"
+where to load the mirrors list from or where to save it to.
+The default location is \fB/var/lib/apt-spy/mirrors.txt\fP.
+Using this option allows you to specify a different location. 
+When updating, this defines where the updated mirrors list will be saved.
+.TP
+.BI -o " output-file"
+location for the new \fBsources.list\fP.
+By default the new file is created as \fB/etc/apt/sources.list\fP.
+.TP
+.BI -p " proxy"
+use \fIproxy\fP as a proxy server.
+This should be specified as `hostname:port'.
+.TP
+.BI -s " country-list"
+A comma-separated list of countries to benchmark. At the moment, this cannot
+be used with the "area" option.
+.TP
+.BI -t " time"
+how long (approximately) in seconds to download for.
+By default \fItime\fP is 15 seconds.
+How long the benchmark actually downloads for varies due to the way libcurl
+works.
+With the default 15 seconds, the benchmark generally takes beween 10 and 25
+seconds.
+Each server has potentially two protocols (ftp and http) so roughly one
+minute per server would be a reasonable estimate of how long it should take.
+Be aware that this does vary considerably, and that benchmarking any more
+than a very few servers takes considerable time (possibly several hours for
+`-a All').
+.TP
+.BI -u " update-URL"
+specify custom URL to get an updated mirrors list from.
+This can be http, ftp, file, or any other URL type supported by libcurl.
+.TP
+.BI -w " file"
+write a number of top servers to \fIfile\fP in a format suitable for use with 
+the \-i option. The number of servers to output can be specified with the \-n 
+option, and defaults to 5.
+.TP
+.BI -n " number"
+the number of top servers to write with the \-w option.
+.TP
+.BI update
+connect to \fBhttp.us.debian.org\fP and download the mirror list to
+\fB/var/lib/apt-spy/mirrors.txt\fP. The \-u or \-m options may be used
+to respectively specify a different URL for the mirrors list or a different 
+location for the downloaded file.
+.TP
+.BI -v
+output a version number.
+.TP
+.BI -h
+print a short usage message.
+.SH SEE ALSO
+.BR sources.list "(5), " apt-spy.conf "(5), " apt (8).
+.SH AUTHOR
+\fBapt-spy\fP and this manual page was written by Steven Holmes
+<steg@bsdeviant.org>.
+.PP
+The original version of \fBapt-spy\fP was written by Danny Rodriguez
+<messiah@optonline.net>.
+.PP
+This version is a total rewrite.

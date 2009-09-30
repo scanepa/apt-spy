@@ -1,0 +1,32 @@
+This version of apt-spy is by Steven Holmes <steg@bsdeviant.org>. The
+original was by Danny Rodriguez <messiah@optonline.net>. This is a complete
+re-write of the original.
+
+You need to create a directory /usr/share/apt-spy
+
+Then run: 
+./apt-spy update
+
+Then: 
+cp apt-spy.conf /etc
+
+Then:
+./apt-spy -a <area> -d <distribution>
+
+valid values for <area> are: 
+	Africa
+	Asia
+	Europe
+	North-America
+	Oceania
+	South-America
+	All
+
+Any value is valid for <distribution> and whatever value you use will be
+used in sources.list.  *Sensible* values are stable, testing, unstable,
+woody, sarge or sid.
+
+The program will write a new /etc/apt/sources.list
+Your old /etc/apt/sources.list will be saved to /etc/apt/sources.list.bak
+
+

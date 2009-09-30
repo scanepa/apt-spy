@@ -1,0 +1,72 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH APT-SPY.CONF 5 "20th May, 2003"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+apt-spy.conf \- configuration file for apt-spy(8)
+.SH DESCRIPTION
+\fBapt-spy.conf\fP is the configuration file for \fBapt-spy\fP(8). 
+It consists of a series of area labels, followed by a list of countries
+belonging to that label. 
+Whitespace is ignored.
+.PP
+Comments may be added anywhere, and begin with the hash ('#') character.
+Once a hash character is encountered, the rest of the line is ignored.
+.PP
+A label consists of any alphanumeric characters, and ends with a colon
+character (':'). 
+The label must be on a line by itself (excluding comments).
+.PP
+Following a label are a list of country codes (one per line) of countries
+belonging to that label.
+.PP
+Each country has a unique two-letter country code corresponding to its top
+level domain identifier.
+This is the same as the ISO3166 code.
+You can find the country code for a specific country either by looking at
+\fB/var/lib/apt-spy/mirrors.txt,\fP or by looking at the commented
+examples in the default \fBapt-spy.conf\fP.
+.PP
+Labels cannot exist within labels.  
+The end of a label section is signaled by the start of a new one, or by the
+end of file.
+.PP
+Any valid label existing in \fBapt-spy.conf\fP can be specified to apt-spy using
+the '\-a' option. 
+apt-spy will then proceed to benchmark the mirrors in the list of countries
+associated with that label.
+.SH EXAMPLES
+.TP
+This is an example of a valid apt-spy.conf file:
+.nf
+	USUK:
+		GB	# United Kingdom
+		US	# United States
+
+	Australia:
+		AU
+
+	France-Germany-Netherlands:
+		FR
+		DE
+		NL
+.fi
+.PP
+There is a default configuration file included with apt-spy. For further
+examples, and for a list of valid country codes, please refer to this.
+
+.SH SEE ALSO
+.BR apt-spy "(8), " apt "(8), " sources.list "(5)"
