@@ -1,6 +1,3 @@
-2009-02-22  Stefano Canepa  <sc@galletto.canepa.home>
-
-
 2009-02-22  Stefano Canepa  <sc@linux.it>
 
 	* parse.c (build_area_file): Modified to use real mirrors site

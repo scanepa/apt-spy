@@ -1,7 +1,7 @@
 /* apt-spy (c) Steven Holmes, 2003.
  * (c) Stefano Canepa, 2008, 2009
  * 
- * This software was licensed as detailed in the LICENSE.old file. 
+ * This software is licensed as detailed in the COPYRIGHT file. 
  */
 
 #ifndef __BENCHMARK_H

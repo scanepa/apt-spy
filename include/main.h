@@ -1,7 +1,7 @@
  /*
  * apt-spy (C)
  * Stefano Canepa <sc@linux.it>, 2008, 2009
- * This software was licensed as detailed in the LICENSE file.
+ * This software is licensed as detailed in the COPYRIGHT file.
  */
 
 void usage(void);

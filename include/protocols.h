@@ -1,6 +1,6 @@
 /* apt-spy (c) Steven Holmes, 2003.
  *         (c) Stefano Canepa <sc@linux.it> 2008,2009
- * This software is licensed as detailed in the LICENSE file.
+ * This software is licensed as detailed in the COPYRIGHT file.
  */
 
 #ifndef __PROTOCOLS_H
@@ -8,6 +8,6 @@
 
 #include "parse.h" /* enum protocol */
 
-int get_file(server_t *current, CURL *curl, char *file, enum protocol protocol, size_t *total_bytes);
+int get_file(server_t *current, CURL *curl, char *file, enum protocol protocol, int *total_bytes);
 
 #endif

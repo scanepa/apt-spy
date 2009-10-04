@@ -78,14 +78,22 @@ FILE *select_config(char *config_file)
 FILE *select_mirror(char *mirror_list, int are_updating)
 {
 	FILE *fp;
-/*	
-	if (mirror_list == NULL)
-		mirror_list = d_mirror;
-*/	
-	if (are_updating == 1)
-		fp = fopen(mirror_list, "w");
-	else
-		fp = fopen(mirror_list, "r");
+
+	switch (are_updating) {
+ 	case -1:
+		printf("Creating mirror file: %s", mirror_list);
+		fp = fopen(mirror_list, "w+");
+		break;
+	case 0:
+	fp = fopen(mirror_list, "r");
+		break;
+	case 1:
+		fp = fopen(mirror_list, "w");		
+		break;
+	default:
+		return NULL;
+		break;
+	}	
 	
 	return fp;
 }
@@ -203,14 +211,3 @@ int backup(char *orig_file)
 	free(new_name);
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-

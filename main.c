@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <limits.h>
+#include  <sys/stat.h>
 
 #include "include/main.h"
 #include "include/update.h"
@@ -47,6 +48,7 @@ int main(int argc, char *argv[])
 	char str[100] = "";
 	int i;
 	char *end;
+	struct stat buf;
 	
 	/* Number of servers to test. If negative, test them all. */
 	int test_number = -1;		
@@ -199,6 +201,21 @@ int main(int argc, char *argv[])
 
 	if (strcmp(area, D_AREA) && (country_list != NULL))
 		usage();
+
+	/*
+	 * if the use does not specify the mirror list file verify if
+	 * there is the file and if not download it from main debian
+	 * mirror
+	 */
+	if (strcmp(mirror_list, D_MIRROR) == 0) {
+		if (stat(mirror_list, &buf)!= 0) {
+			mirror_p = select_mirror(mirror_list, -1);
+			if (update(mirror_p, update_url, proxy) != 0) {
+				fprintf(stderr, "Failed to download mirror list. Exiting.\n");
+				exit(1);
+			}
+		}
+	}
 
 	/* Open mirror file. We pass argc so it can tell if we're updating 
 	   or not */
@@ -392,3 +409,6 @@ void version()
 	printf("apt-spy %s\n", apt_spy_v);
 	exit(0);
 }
+
+
+

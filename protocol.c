@@ -12,7 +12,8 @@
 #include "include/parse.h"
 #include "include/protocols.h"
 
-int get_file(server_t *current, CURL *curl, char *file, enum protocol protocol, size_t *total_bytes)
+/* int get_file(server_t *current, CURL *curl, char *file, enum protocol protocol, size_t *total_bytes) */
+int get_file(server_t *current, CURL *curl, char *file, enum protocol protocol, int *total_bytes)
 {
 	char errorbuff[CURL_ERROR_SIZE + 1];
 	int urlsize=0;

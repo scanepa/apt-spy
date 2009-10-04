@@ -1,4 +1,3 @@
-
 /*
  * apt-spy (c) Steven Holmes, 2003.
  *         (c) Stefano Canepa <sc@linux.it>, 2008, 2009.
@@ -19,7 +18,8 @@
  * It is safer to keep track of the total amount of data read ourselves.
  * This fixes a bug appearing when libcurl would not reset its own byte counter
  */
-static size_t total_bytes = 0;
+/* static size_t total_bytes = 0; */
+static int total_bytes = 0;
 
 /** 
  * 
@@ -134,17 +134,3 @@ size_t null_write_function(double *bytes, size_t size, size_t nmemb, void *strea
 	total_bytes += size * nmemb;
 	return size * nmemb;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
