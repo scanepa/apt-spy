@@ -27,10 +27,10 @@
 int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 					char *area)
 {
-	char *line;		/* Where we read the lines into */
-	char *tmp;		/* Temp. pointer */
-	char *inputline;	/* The line that will be written to config_p */
-	char *country_code;	/* where we put the country code */
+	char *line = NULL;		/* Where we read the lines into */
+	char *tmp = NULL;		/* Temp. pointer */
+	char *inputline = NULL;		/* The line that will be written to config_p */
+	char *country_code = NULL;	/* where we put the country code */
 	int infilePos;
 	char *dirs;
 	char *aliasList;
@@ -93,16 +93,32 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 		 * It was a blank line. If it points to a '#', there is a comment.
 		 * We skip it too.
 		 */
-		if ((*country_code == '\n') || (*country_code == '#'))
+		if ((*country_code == '\n') || (*country_code == '#')) {
+			/* we mustn't forget to free the allocated memory */
+			free(line);
 			continue;
+		}
 
-		if ((strchr(line, ':')) != NULL)
-			return 0;			/* End of list. Return. */
+		if ((strchr(line, ':')) != NULL) {
+			/* we mustn't forget to free the allocated memory */
+			free(line);
+			return 0;	/* End of list. Return. */
+		}
 
 		/*
 		 * We do a little fiddling to get the country code down to 2 letters
 		 * and a space
+		 * But before we must add 1 or 2 bytes to the allocated memory if
+		 * it's too small. The line can be only one char: users may do
+		 * silly things sometimes...
 		 */
+		if (strlen(country_code) < 3) {
+			line = realloc(line,strlen(line)+4-strlen(country_code));
+			if (line == NULL) {
+				perror("realloc");
+				exit(1);
+			}
+		}
 		*(country_code + 2) = ' ';
 		*(country_code + 3) = '\0';
 
@@ -267,7 +283,9 @@ int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
  */
 int find_country(FILE *mirror_list, char *country_code)
 {
-	char *line, *cc;
+	char *line =NULL;
+	char *cc =NULL;
+	char *tmp =NULL;	/* Temp. pointer */
 
 	/* Make sure we're at beginning of file */
 	rewind(mirror_list);
@@ -280,27 +298,33 @@ int find_country(FILE *mirror_list, char *country_code)
 	while ((line = next_entry(mirror_list)) != NULL) {
 
 		cc = strstr(line, country_code);
-		if (cc == NULL)
+		if (cc == NULL) {
+			/* we mustn't forget to free the allocated memory */
+			free(line);
 			continue;
-			
+		}
+
 		/* Skip white space */
-		while (isspace(*line))
-			++line;
-		
+		/* and keep trace of the ponter to free it later */
+		tmp = line;
+		while (isspace(*tmp))
+			++tmp;
 		/* Country code should be first two characters on line. */
-		if (cc == line)		
+		if (cc == tmp)
 			break;
 	}
 
 	if (line == NULL)
 		return 1;
-	
-	next_entry(mirror_list);		/* Skip a line */
-	
-	if (ferror(mirror_list)) {
-		free(line);
+	/* we mustn't forget to free the allocated memory */
+	free(line);
+
+	/* we mustn't forget that next_entry allocates memory */
+	line = next_entry(mirror_list);		/* Skip a line */
+	if (!line) {
 		return 1;
 	}
+	free(line);
 	return 0;		/* We're positioned nicely for the next read */
 }
 
@@ -322,8 +346,10 @@ char *get_mirrors(FILE *mirror_list)
 	 *
 	 * Verify if the next_entry returns NULL before going on
 	 */
-	if((save_line = line = next_entry(mirror_list)) == NULL)
-		return NULL;
+	if((save_line = line = next_entry(mirror_list)) == NULL) {
+		perror("malloc");
+		exit(1);
+	}
 	
 	/* Allocate space for creation */
 	len=5+strlen(line);
@@ -337,6 +363,7 @@ char *get_mirrors(FILE *mirror_list)
 	/* test for file error */
 	if (ferror(mirror_list)) {
 		perror("fopen");
+		free(line); /* we mustn't forget it */
 		free(save_creation);
 		return NULL;
 	}
@@ -345,14 +372,17 @@ char *get_mirrors(FILE *mirror_list)
 	 * If the line begins with a "  (" it's a mirror alias so we need to
 	 * continue some way
 	 */	
-	if (strstr(line, "  ("))
+	if (strstr(line, "  (")) {
+		free(line); /* we mustn't forget it */
 		return save_line;
+	}
 	
 	/*
 	 * If the line begins with a space, we assume it is empty and the list
 	 * is exhausted.
 	 */
 	if (isspace(*line) != 0) {
+		free(line); /* we mustn't forget it */
 		free(save_creation);
 		return NULL;
 	}
@@ -535,7 +565,7 @@ int write_list(FILE *outfile_p, server_t *best, char *dist,
 int write_top(FILE *infile_p, FILE *outfile_p, server_t *best)
 {
 	int i = 0;
-	char *line;
+	char *line = NULL;
 	
 	while (i < bestnumber) {
 	
@@ -547,8 +577,10 @@ int write_top(FILE *infile_p, FILE *outfile_p, server_t *best)
 			if (best[i].hostname != NULL && 
 			    strstr(line, best[i].hostname) != NULL) {	/* Check for hostname */
 				fputs(line, outfile_p);		/* if it's there, write to file */
+				free(line);  /* we mustn't forget it */
 				break;
 			}
+			free(line);  /* we mustn't forget it */
 		}
 		
 		if ((ferror(infile_p) != 0) || (ferror(outfile_p) != 0))

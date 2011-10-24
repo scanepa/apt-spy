@@ -106,13 +106,19 @@ FILE *select_mirror(char *mirror_list, int are_updating)
  */
 char *next_entry(FILE *infile_p)
 {
-	char *temp;
-	unsigned long orig_position, buffsize;
+	char *temp = NULL;
+	/* long int values because ftell returns -1 when it fails */
+	long int orig_position = 0;
+	long int buffsize = 0;
 	int c;
 	int count;
-	
+
 	/* Save original file position */
 	orig_position = ftell(infile_p);
+	if (orig_position < 0) {
+		perror("Input error (ftell)");
+		exit(1);
+	}
 
 	/* Fast-forward to new line */
 	/*
@@ -131,9 +137,15 @@ char *next_entry(FILE *infile_p)
 		}
 		c = getc(infile_p);
 	}
-	
-	buffsize = ftell(infile_p) - orig_position;	/* Calculate buffer size */
-	
+
+	/* Calculate buffer size and check for ftell errors */
+	buffsize = ftell(infile_p);
+	if (buffsize < 0) {
+		perror("Input error (ftell)");
+		exit(1);
+	}
+	buffsize -= orig_position;
+
 	/* create storage space for line */
 	temp = malloc(buffsize + 1);
 
@@ -142,11 +154,17 @@ char *next_entry(FILE *infile_p)
 		exit(1);
 	}
 
-	/* Rewind file to original position */
-	fseek(infile_p, orig_position, SEEK_SET);
+	/* Rewind file to original position and check for errors */
+	if (fseek(infile_p, orig_position, SEEK_SET) != 0) {
+		perror("Input error (fseek)");
+		exit(1);
+	}
 
 	/* We now read the line into the newly created buffer */
-	fgets(temp, buffsize + 1, infile_p);
+	if (!fgets(temp, buffsize + 1, infile_p)) {
+		perror("Input error (fgets)");
+		exit(1);
+	}
 
 	return temp;
 }
