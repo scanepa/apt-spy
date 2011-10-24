@@ -42,11 +42,12 @@ int main(int argc, char *argv[])
 	FILE *mirror_p; /* mirror list pointer */
 	FILE *topfile_p;
 	int timeout = 15; /* time to benchmark each server */
-	int toplist = 0; /* Whether to write toplist. */
+	/* int toplist = 0; *//* Whether to write toplist. *//* UNUSED */
 	int argsCount = 0; /* persistent counter for args */
 	char *args[100]; /* persistent args array */
-	char str[100] = "";
-	int i;
+	/* char str[100] = ""; *//* We don't need to put optarg in str */
+	char str[4] = "-? "; /* short option string */
+	/* int i; *//* UNUSED */
 	char *end;
 	struct stat buf;
 	
@@ -54,20 +55,21 @@ int main(int argc, char *argv[])
 	int test_number = -1;		
 
 	/* Server information structures. */
-	server_t current, *best;
+	server_t current;
+	server_t *best = NULL;
 
 	/* Parse options... */
 	while((c = getopt(argc, argv, "y:a:c:d:e:f:i:m:o:p:s:t:u:w:n:vh")) != -1)
 	{
 		if (optarg)
 		{ /* not set with -h */
-			for(i = 0; i < 100; i++)
-				str[i] = '\0';
-			strcpy(str,"");
-			str[0] = '-'; str[1] = c; str[2] = ' ';
-			strcat(str, optarg);
-			args[argsCount] = (char*)malloc(strlen(str));
-			strcpy(args[argsCount],str);
+			str[1] = c;
+			/* args[argsCount] = (char*)malloc(strlen(str)); *//* BAD: it should be malloc(strlen(str)+1) */
+			/* strcat(str, optarg); *//* BAD: optarg may be too long */
+			args[argsCount] = malloc(strlen(str)+strlen(optarg)+1);
+			memset(args[argsCount],0,strlen(str)+strlen(optarg)+1);
+			strncpy(args[argsCount],str,strlen(str));
+			strncat(args[argsCount],optarg,strlen(optarg));
 			argsCount++;
 		}
 		
@@ -78,6 +80,7 @@ int main(int argc, char *argv[])
 			break;
 		 /* Area to benchmark */
 		case 'a':
+			free(area); /* allocated by strdup */
 			area = optarg;
 			break;
 		/* Distribution we'll write into apt-sources. */
@@ -86,14 +89,14 @@ int main(int argc, char *argv[])
 			break;
 		/* Configuration file to use */
 		case 'c':
-			printf("Option: %c\n",c);
-			printf("Option arg: %s\n", optarg);
+			/* printf("Option: %c\n",c);
+			printf("Option arg: %s\n", optarg); */
 			/* config_file = (char *)malloc(25);
 			strcpy(config_file, optarg);
 			*/
 			config_file = optarg;
 			
-			printf("config_file: %s\n", config_file);
+			printf("Using configuration file: %s\n", config_file);
 			break;
 		/* Number of servers to benchmark */
 		case 'e':
@@ -145,7 +148,7 @@ int main(int argc, char *argv[])
 			break;
 		/* Should we write a list of the "top" servers? */
 		case 'w':
-			toplist = 1;
+			/* toplist = 1; *//* UNUSED */
 			topfile = optarg;
 			break;
 		/* Number of servers to write in "top" server list */
@@ -181,6 +184,9 @@ int main(int argc, char *argv[])
 		perror("malloc");
 		exit(1);
 	}
+
+	/* Zero the "best" structure (just after malloc for readability) */
+	memset(best, 0, sizeof(server_t) * (bestnumber + 1));
 
 	/* We require an area and distribution argument if we are not updating */
 	if ((argc == 0) && (distrib == NULL))
@@ -317,10 +323,6 @@ int main(int argc, char *argv[])
 	/* Make sure we're at the beginning... */
 	rewind(infile_p);
 
-	/* Zero the "best" structure */
-	for (c = 0; c < bestnumber; c++)
-		memset(&best[c], 0, sizeof(server_t));
-
 	/* This is the main loop. It'll exit when we've exhausted the URL 
 	   list or test_number is 0 */
 
@@ -374,8 +376,10 @@ int main(int argc, char *argv[])
 		fclose(topfile_p);
 	}
 	/* We're all done */
-	free(best);
-	
+	/* free(best); */
+	/* See above: 'there's no point in freeing the "best" structures' */
+	/* Bis repetita placent */
+
 	exit(0);
 }
 
