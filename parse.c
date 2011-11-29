@@ -14,13 +14,13 @@
 #include <ctype.h>
 
 #include "include/global.h"
-#include "include/parse.h" 
+#include "include/parse.h"
 #include "include/file.h"
 #include "include/trim.h"
 
 /**
  * @param The config file
- * @param 
+ * @param
  * @param The mirror list file
  * @param Area
  */
@@ -37,24 +37,24 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 	char *dst;
 	char *mirrorData;
 	char *token;
-	
+
 	/* Uppercase area */
 	str_toupper(area);
 
 	while((line = next_entry(config_p)) != NULL) {
 		/* Uppercase line */
 		str_toupper(line);
-		
+
 		/* test for area string */
 		if ((tmp = strstr(line, area)) != NULL) {
-		
+
 			if ((strchr(tmp,':')) == NULL) { 	/* And for trailing colon.. */
 				free(line);
 				continue;			/* .. it's not there */
 			}
 			break;
 		}
-			
+
 		free(line);
 
 		if (ferror(config_p) != 0)			/* Check for File error */
@@ -66,9 +66,9 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 		fprintf(stderr, "Could not find area named %s\n", area);
 		return 1;
 	}
-	
+
 	free(line);
-		
+
 	/* We now have the "label" line. Country list begins on the next line. */
 	while ((line = next_entry(config_p)) != NULL) {
 
@@ -87,7 +87,7 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 		 */
 		while ((*country_code != '\n') && (isspace(*country_code) != 0))
 			++country_code;
-		
+
 		/*
 		 * If country_code points to a '\n', there were no other characters.
 		 * It was a blank line. If it points to a '#', there is a comment.
@@ -138,17 +138,17 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 		 * The next read of infile_p will return the first mirror entry.
 		 * We parse this and build a line to put into the temporary file.
 		 */
-		
+
 		while ((inputline = get_mirrors(mirror_list)) != NULL) {
 			/* if the line does not begin with "  (" */
 			if (strstr(inputline, "  (") == NULL) {
 /*			if(!isspace(*inputline)) { */
 				/* get position of infile_p */
-				infilePos = ftell(infile_p);		
-				/* We now write the line to the temporary file */	
+				infilePos = ftell(infile_p);
+				/* We now write the line to the temporary file */
 				fputs(inputline, infile_p);
-				free(inputline);
-	
+				/* free(inputline); */
+
 				if ((ferror(infile_p)) != 0) { 	/* Check for file error */
 					free(line);
 					return 1;
@@ -162,7 +162,7 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 				   ftp.XX.debian.org */
 				fseek(infile_p, infilePos, SEEK_SET);
 				mirrorData = next_entry(infile_p);
-				
+
 				/* create a copy of inputline with the list of real name of the
 				   alias and trim leading and trailing space and parentesis from
 				   inputline */
@@ -182,32 +182,32 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 					strcpy(dst, token);
 					strcat(dst, dirs);
 					fputs(dst, infile_p);
-					token = strtok(NULL, ", ");					
+					token = strtok(NULL, ", ");
 				}
-				
+
 			}
 		}
-
+    free(inputline);
 		free(line);
 	}
 	return 0;
 }
 
-/** 
- * 
- * 
- * @param config_p 
- * @param infile_p 
- * @param mirror_list 
- * @param country_list 
- * 
- * @return 
+/**
+ *
+ *
+ * @param config_p
+ * @param infile_p
+ * @param mirror_list
+ * @param country_list
+ *
+ * @return
  */
 int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 					   char *country_list)
 {
 	char *country_code;
-	char *p, *q; 
+	char *p, *q;
 	char *inputline;
 
 	int found = 0;
@@ -223,23 +223,23 @@ int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 	while (*p != '\0') {
 		/* Reset country code pointer */
 		q = country_code;
-	
+
 		/* Skip white space */
 		while (isspace(*p))
 			++p;
-			
+
 		/* Copy up until end or comma */
 		while ((*p != '\0') && (*p != ',') && (isspace(*p) == 0))
 			*q++ = *p++;
-			
+
 		/* Skip more white space. *sigh* */
 		while (isspace(*p))
 			++p;
-	
+
 		/* skip past comma */
 		if (*p != '\0')
 			++p;
-		
+
 		/* String-ify */
 		*q++ = ' ';
 		*q = '\0';
@@ -256,16 +256,17 @@ int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 			if( ! isspace(*inputline)) {
 				fputs(inputline, infile_p);
 				free(inputline);
-				
+
 				if (ferror(infile_p)) {
 					free(country_code);
 					return 1;
 				}
 			}
+
 		}
 	}
 	free(country_code);
-	
+
 	/* Check we have found at least one country */
 	if (found == 0)
 		return 1;
@@ -273,13 +274,13 @@ int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 		return 0;
 }
 
-/** 
- * 
- * 
- * @param mirror_list 
- * @param country_code 
- * 
- * @return 
+/**
+ *
+ *
+ * @param mirror_list
+ * @param country_code
+ *
+ * @return
  */
 int find_country(FILE *mirror_list, char *country_code)
 {
@@ -350,7 +351,7 @@ char *get_mirrors(FILE *mirror_list)
 		perror("malloc");
 		exit(1);
 	}
-	
+
 	/* Allocate space for creation */
 	len=5+strlen(line);
 	save_creation = creation = malloc(len);
@@ -371,12 +372,12 @@ char *get_mirrors(FILE *mirror_list)
 	/*
 	 * If the line begins with a "  (" it's a mirror alias so we need to
 	 * continue some way
-	 */	
+	 */
 	if (strstr(line, "  (")) {
 		free(line); /* we mustn't forget it */
 		return save_line;
 	}
-	
+
 	/*
 	 * If the line begins with a space, we assume it is empty and the list
 	 * is exhausted.
@@ -393,7 +394,7 @@ char *get_mirrors(FILE *mirror_list)
 
 	/* And add a colon, which is the field seperator */
 	*creation++ = ':';
-	
+
 	/*
 	 * We skip over whitespace. If there is a lot of whitespace, we assume
 	 * there is no FTP entry.
@@ -403,8 +404,8 @@ char *get_mirrors(FILE *mirror_list)
 		++counter;
 	}
 
-	/* Check if there is an entry or just more space */	
-	while (isspace(*line) == 0) 
+	/* Check if there is an entry or just more space */
+	while (isspace(*line) == 0)
 		*creation++ = *line++;
 
 	*creation++ = ':';
@@ -423,14 +424,14 @@ char *get_mirrors(FILE *mirror_list)
 	if (*line == '/') {
 		while (isspace(*line) == 0)
 			*creation++ = *line++;
-	}			
+	}
 
 	*creation++ = ':';
 	*creation++ = '\n';
 	*creation++ = '\0';
 
 	free(save_line);
-	
+
 	return save_creation;
 }
 
@@ -467,10 +468,10 @@ void tokenise(server_t *current, char *cur_entry)
 			perror("malloc");
 			exit(1);
 		}
-		temp = current->path[FTP];		
+		temp = current->path[FTP];
 		while (*cur_entry != ':')
 			*temp++ = *cur_entry++;
-			
+
 		*temp++ = '\0';
 		current->path[FTP]=realloc(current->path[FTP],
 								   1+strlen(current->path[FTP]));
@@ -490,7 +491,7 @@ void tokenise(server_t *current, char *cur_entry)
 		temp = current->path[HTTP];
 		while (*cur_entry != ':')
 			*temp++ = *cur_entry++;
-			
+
 		*temp++ = '\0';
 		current->path[HTTP]=realloc(current->path[HTTP],
 									1+strlen(current->path[HTTP]));
@@ -515,7 +516,7 @@ int write_list(FILE *outfile_p, server_t *best, char *dist,
 	/* Make our mark ;) */
 	fprintf(outfile_p, "# sources.list generated by apt-spy %s\n", apt_spy_v);
 	fprintf(outfile_p, "#\n# Generated using:\n#\n# apt-spy \\\n");
-	for(i = 0; i < l-1; i++) 
+	for(i = 0; i < l-1; i++)
 	{
 		fprintf(outfile_p, "# \t%s \\\n", args[i]);
 	}
@@ -526,22 +527,22 @@ int write_list(FILE *outfile_p, server_t *best, char *dist,
 		assert(best[0].stats.protocol == HTTP);
 		url=best[0].url[HTTP];
 	}
-	
+
 	/* And write the line */
-	if(section_list != NULL) 
+	if(section_list != NULL)
 	{
 		/* substitute , with a white space */
 		p = strstr(section_list, ",");
 		t[0] = 0; /*now t contains empty string */
 		strncat(t, section_list, p-section_list); /*copy part of s preceding a */
-		strcat(t, " "); 
+		strcat(t, " ");
 		strcat(t, p+strlen(",")); /*add on the rest of s */
 		strcpy(section_list, t);
-		fprintf(outfile_p, "deb %s %s main %s\n", url, dist, section_list);		
+		fprintf(outfile_p, "deb %s %s main %s\n", url, dist, section_list);
 		/* We also write a deb-src line */
 		fprintf(outfile_p, "deb-src %s %s main %s\n", url, dist, section_list);
 	} else {
-		fprintf(outfile_p, "deb %s %s main #contrib non-free\n", url, dist);		
+		fprintf(outfile_p, "deb %s %s main #contrib non-free\n", url, dist);
 		/* We also write a deb-src line */
 		fprintf(outfile_p, "deb-src %s %s main #contrib non-free\n", url, dist);
 	}
@@ -566,15 +567,15 @@ int write_top(FILE *infile_p, FILE *outfile_p, server_t *best)
 {
 	int i = 0;
 	char *line = NULL;
-	
+
 	while (i < bestnumber) {
-	
+
 		/* Make sure we're at the beginning */
 		rewind(infile_p);
-		
+
 		/* Read in a line... */
 		while ((line = next_entry(infile_p)) != NULL) {
-			if (best[i].hostname != NULL && 
+			if (best[i].hostname != NULL &&
 			    strstr(line, best[i].hostname) != NULL) {	/* Check for hostname */
 				fputs(line, outfile_p);		/* if it's there, write to file */
 				free(line);  /* we mustn't forget it */
@@ -582,7 +583,7 @@ int write_top(FILE *infile_p, FILE *outfile_p, server_t *best)
 			}
 			free(line);  /* we mustn't forget it */
 		}
-		
+
 		if ((ferror(infile_p) != 0) || (ferror(outfile_p) != 0))
 			return 1;
 		++i;
@@ -590,8 +591,8 @@ int write_top(FILE *infile_p, FILE *outfile_p, server_t *best)
 	return 0;
 }
 
-/** 
- * Utility function 
+/**
+ * Utility function
  */
 char *str_toupper(char *str)
 {

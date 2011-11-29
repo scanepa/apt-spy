@@ -1,6 +1,7 @@
-/* 
- * apt-spy (c) Steven Holmes, 2003. 
- * Stefano Canepa <sc@linux.it>, 2008, 2009
+/*
+ * apt-spy (c) Steven Holmes, 2003.
+ * Stefano Canepa <sc@linux.it>, 2008, 2009, 2011
+ *
  * This software is licensed as detailed in the COPYRIGHT file
  */
 
@@ -50,9 +51,9 @@ int main(int argc, char *argv[])
 	/* int i; *//* UNUSED */
 	char *end;
 	struct stat buf;
-	
+
 	/* Number of servers to test. If negative, test them all. */
-	int test_number = -1;		
+	int test_number = -1;
 
 	/* Server information structures. */
 	server_t current;
@@ -72,7 +73,7 @@ int main(int argc, char *argv[])
 			strncat(args[argsCount],optarg,strlen(optarg));
 			argsCount++;
 		}
-		
+
 		switch(c) {
 		 /* Sections to include into apt-source */
 		case 'y':
@@ -95,7 +96,7 @@ int main(int argc, char *argv[])
 			strcpy(config_file, optarg);
 			*/
 			config_file = optarg;
-			
+
 			printf("Using configuration file: %s\n", config_file);
 			break;
 		/* Number of servers to benchmark */
@@ -110,7 +111,7 @@ int main(int argc, char *argv[])
 			break;
 		/* File, relative to Debian base, to grab from server. */
 		case 'f':
-			grab_file = optarg;				
+			grab_file = optarg;
 			break;
 		/* User-specified list of servers to benchmark. */
 		case 'i':
@@ -142,7 +143,7 @@ int main(int argc, char *argv[])
 				exit(1);
 			}
 			break;
-		/* The URL we should update ourselves from */					
+		/* The URL we should update ourselves from */
 		case 'u':
 			update_url = optarg;
 			break;
@@ -163,14 +164,14 @@ int main(int argc, char *argv[])
 			break;
 		case 'v':
 			version();
-			break;			
+			break;
 		/* Help!! */
 		case 'h':
 		default:
 			usage();			/* display help */
 			break;
 		}
-	}	
+	}
 	argc -= optind;
 	argv += optind;
 
@@ -178,7 +179,7 @@ int main(int argc, char *argv[])
 	if ((test_number >= 0) && (bestnumber > test_number))
 		bestnumber = test_number;
 
-	best = malloc(sizeof(server_t) * (bestnumber + 1)); 
+	best = malloc(sizeof(server_t) * (bestnumber + 1));
 
 	if (best == NULL) {
 		perror("malloc");
@@ -223,7 +224,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/* Open mirror file. We pass argc so it can tell if we're updating 
+	/* Open mirror file. We pass argc so it can tell if we're updating
 	   or not */
 	mirror_p = select_mirror(mirror_list, argc);
 	if (mirror_p == NULL) {
@@ -232,7 +233,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	/* the only possible argument now is "update", for updating the 
+	/* the only possible argument now is "update", for updating the
 	   mirrors list */
 	if (argc == 1) {
 		if (strcmp(argv[0], "update") != 0)
@@ -248,13 +249,13 @@ int main(int argc, char *argv[])
 		printf("Update complete. Exiting.\n");
 		exit(0);
 	}
-	
+
 	/* argc should be 0. If not, there's something wrong. */
 	if (argc != 0)
 		usage();
-	                                
 
-	/* We open the infile. Either a temporary file, or a user-specified 
+
+	/* We open the infile. Either a temporary file, or a user-specified
 	   one. */
 	infile_p = select_infile(infile);
 	if (infile_p == NULL) {
@@ -297,7 +298,7 @@ int main(int argc, char *argv[])
 	if (infile == NULL) {
 /*		if (area != NULL) {
 			if (build_area_file(config_p, infile_p, mirror_p, area) != 0) {
-				fprintf(stderr, 
+				fprintf(stderr,
 				"Error building area file. Exiting.\n");
 				exit(1);
 			}
@@ -313,17 +314,17 @@ int main(int argc, char *argv[])
 
 		} else {
 			if (build_area_file(config_p, infile_p, mirror_p, area) != 0) {
-				fprintf(stderr, 
+				fprintf(stderr,
 						"Error building area file. Exiting.\n");
 				exit(1);
 			}
-		}		
+		}
 	}
-	
+
 	/* Make sure we're at the beginning... */
 	rewind(infile_p);
 
-	/* This is the main loop. It'll exit when we've exhausted the URL 
+	/* This is the main loop. It'll exit when we've exhausted the URL
 	   list or test_number is 0 */
 
 	while (((cur_entry = next_entry(infile_p)) != NULL) && test_number != 0) {
@@ -337,7 +338,7 @@ int main(int argc, char *argv[])
 
 		/* Do the benchmark */
 		if (benchmark(&current, proxy, timeout, grab_file) != 0) {
-			fprintf(stderr, 
+			fprintf(stderr,
 			"Error while performing benchmark. Exiting.\n");
 			exit(1);
 		}
@@ -362,13 +363,13 @@ int main(int argc, char *argv[])
 	/* close the file */
 	fclose(outfile_p);
 
-	/* We write out the top servers to a file if asked. Note there's no 
+	/* We write out the top servers to a file if asked. Note there's no
 	   point in freeing the "best" structures. */
 	if (topfile) {
 	        printf("writing topfile: %s\n", topfile);
 
 		if (write_top(infile_p, topfile_p, best) != 0) {
-			fprintf(stderr, 
+			fprintf(stderr,
 			"Error writing top servers list. Exiting.");
 			exit(1);
 		}
