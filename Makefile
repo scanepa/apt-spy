@@ -1,4 +1,4 @@
-VERSION=3.2.1
+VERSION=3.2.2
 CC = cc
 CFILES = benchmark.c  file.c  protocol.c  main.c  parse.c update.c trim.c
 CFLAGS = -lcurl -Wall -pedantic-errors
