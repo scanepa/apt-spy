@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH APT-SPY 8 "17th June, 2003"
+.TH APT-SPY 8 "17th December, 2011"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -16,7 +16,7 @@
 .\" .sp <n>    insert n+1 empty lines
 .\" for manpage-specific macros, see man(7)
 .SH NAME
-apt-spy \- program to generate a /etc/apt/sources.list file
+apt-spy \- program to generate a /etc/apt/sources.list.d/apt-spy.list file
 .SH SYNOPSIS
 .BR apt-spy " -d " \fIdistribution\fP 
 .RB " [ " "-a " \fIarea\fP 
@@ -37,20 +37,22 @@ apt-spy \- program to generate a /etc/apt/sources.list file
 .RB "] [ " "update " "]"
 
 .SH DESCRIPTION
-This manual page documents briefly the
+This manual page briefly documents the
 .B apt-spy
 command.
 .PP
 .\" TeX users may be more comfortable with the \fB<whatever>\fP and
 .\" \fI<whatever>\fP escape sequences to invoke bold face and italics, 
 .\" respectively.
-\fBapt-spy\fP is a program that tests a series of Debian archive mirrors for
-bandwith.
-It writes to \fI/etc/apt/sources.list.d/apt-spy.list\fP the fastest server.
+\fBapt-spy\fP is a program that tests all of the Debian archive mirrors the user specifies
+for bandwith and writes, by default, to \fI/etc/apt/sources.list.d/apt-spy.list\fP the
+fastest server. 
 .PP
-You can select which of the many Debian sites to benchmark by geographical
+The user can select which of the many Debian sites to benchmark by geographical
 location.
-
+.pp
+\fBapt-spy\fP does not need to be run by root if the user provides a configuration file, a
+place where to store the mirror list and an output file. See examples for more details.
 .SH OPTIONS
 .TP
 .BI -d " distribution" 
@@ -139,13 +141,36 @@ output a version number.
 .TP
 .BI -h
 print a short usage message.
+.SH EXAMPLES 
+Non root usage:
+.P
+apt-spy -d stable -a Europe -m ./mirror.txt -o apt-spy.list -c apt-spy.conf
+.P 
+Above command tests European mirrors for stable Debian release saving
+http://http.us.debian.org/debian/README.mirrors.txt into mirror.txt, writing source file
+into apt-spy.list using configuration from apt-spy.conf. Note that not root users need to
+specified all these parameters.
+.P
+Updating mirror list file:
+.P
+apt-spy 
+update
+.p
+Creating the /etc/apt/sources.list.d/apt-spy.list file:
+.P
+apt-spy -d stable
+.P
 .SH SEE ALSO
 .BR sources.list "(5), " apt-spy.conf "(5), " apt (8).
 .SH AUTHOR
 \fBapt-spy\fP and this manual page was written by Steven Holmes
-<steg@bsdeviant.org>.
+<steg@bsdeviant.org> and updated by Stefano Canepa <sc@linux.it>.
 .PP
 The original version of \fBapt-spy\fP was written by Danny Rodriguez
 <messiah@optonline.net>.
 .PP
 This version is a total rewrite.
+
+
+
+
