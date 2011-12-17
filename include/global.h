@@ -17,7 +17,7 @@ extern char d_mirror[];
 /* Defaults values */
 
 /* Our version number. */
-#define	apt_spy_v	"v3.2.1"
+#define	apt_spy_v	"v3.2.2"
 
 /* The default area */
 #define	D_AREA		"All"
