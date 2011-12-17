@@ -1,4 +1,4 @@
-/* 
+/*
  * apt-spy (c) Steven Holmes, 2003.
  * (c) Stefano Canepa <sc@linux.it>, 2008, 2009
  * This software is licensed as detailed in the COPYRIGHT file
@@ -17,28 +17,28 @@
 #include "include/global.h"
 #include "include/file.h"
 
-/** 
- * @brief Selects an infile 
- * 
- * @param infile 
- * 
- * @return file pointer of the read access opened file 
+/**
+ * @brief Selects an infile
+ *
+ * @param infile
+ *
+ * @return file pointer of the read access opened file
  */
 FILE *select_infile(char *infile)
 {
 	if (infile != NULL)
 		return fopen(infile, "r");
-	
+
 	/* Else return a temporary file */
 	return tmpfile();
 }
 
 
-/** 
+/**
  * @brief Selects an output file
- * 
- * @param outfile 
- * 
+ *
+ * @param outfile
+ *
  * @return file pointer to the write access opened file
  */
 FILE *select_outfile(char *outfile)
@@ -59,19 +59,19 @@ FILE *select_outfile(char *outfile)
 	return fp;
 }
 
-/** 
+/**
  * @brief Open configuration file
- * 
- * @param config_file 
- * 
- * @return 
+ *
+ * @param config_file
+ *
+ * @return
  */
 FILE *select_config(char *config_file)
 {
 	FILE *fp;
-	
+
 	fp = fopen(config_file, "r");
-	
+
 	return fp;
 }
 
@@ -81,27 +81,27 @@ FILE *select_mirror(char *mirror_list, int are_updating)
 
 	switch (are_updating) {
  	case -1:
-		printf("Creating mirror file: %s", mirror_list);
+		printf("Creating mirror file: %s\n", mirror_list);
 		fp = fopen(mirror_list, "w+");
 		break;
 	case 0:
-	fp = fopen(mirror_list, "r");
+    fp = fopen(mirror_list, "r");
 		break;
 	case 1:
-		fp = fopen(mirror_list, "w");		
+		fp = fopen(mirror_list, "w");
 		break;
 	default:
 		return NULL;
 		break;
-	}	
-	
+	}
+
 	return fp;
 }
-/** 
- * @brief Get the next line of infile_p 
- * 
- * @param infile_p 
- * 
+/**
+ * @brief Get the next line of infile_p
+ *
+ * @param infile_p
+ *
  * @return The next line
  */
 char *next_entry(FILE *infile_p)
@@ -128,7 +128,7 @@ char *next_entry(FILE *infile_p)
 	count = 0;
 	if((c = getc(infile_p)) < 0) /* get the first char */
 		return NULL;
-	
+
 	while ((c != '\n') && (c != EOF)) {
 		count++;
 		if ((c == EOF) && (count = 1))
@@ -169,12 +169,12 @@ char *next_entry(FILE *infile_p)
 	return temp;
 }
 
-/** 
+/**
  * @brief Copy orig_file into a new file named as orig_file with ".bak" appended
- * 
- * @param orig_file 
- * 
- * @return Upon error, "1" is returned 
+ *
+ * @param orig_file
+ *
+ * @return Upon error, "1" is returned
  */
 int backup(char *orig_file)
 {
@@ -196,7 +196,7 @@ int backup(char *orig_file)
 		return 0;		/* Don't backup empty file */
 
 	in_file = fopen(orig_file, "r");
-	
+
 	if (in_file == NULL) {
 		perror("fopen");	/* eep! */
 		return 1;
@@ -210,10 +210,10 @@ int backup(char *orig_file)
 	sprintf(new_name, "%s.bak", orig_file);
 
 	out_file = fopen(new_name, "w");
-	
+
 	if (out_file == NULL)
 		return 1;
-	
+
 	/* Do the copying */
 	while((c = getc(in_file)) != EOF)
 		putc(c, out_file);
@@ -221,11 +221,11 @@ int backup(char *orig_file)
 	if (ferror(in_file) || ferror(out_file)) {
 		perror("putc");
 		return 1;
-	}		
+	}
 
 	fclose(in_file);
 	fclose(out_file);
-	
+
 	free(new_name);
 	return 0;
 }

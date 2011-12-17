@@ -210,26 +210,35 @@ int main(int argc, char *argv[])
 		usage();
 
 	/*
-	 * if the use does not specify the mirror list file verify if
+	 * if the user does not specify the mirror list file verify if
 	 * there is the file and if not download it from main debian
 	 * mirror
 	 */
-	if (strcmp(mirror_list, D_MIRROR) == 0) {
+/*	if (strcmp(mirror_list, D_MIRROR) == 0) { */
 		if (stat(mirror_list, &buf)!= 0) {
 			mirror_p = select_mirror(mirror_list, -1);
-			if (update(mirror_p, update_url, proxy) != 0) {
-				fprintf(stderr, "Failed to download mirror list. Exiting.\n");
-				exit(1);
-			}
-		}
-	}
+      if(mirror_p != NULL) {
+        if (update(mirror_p, update_url, proxy) != 0) {
+          fprintf(stderr, "Failed to download mirror list. Exiting.\n");
+          exit(1);
+        }
+      }
+      else
+      {
+        perror("fopen");
+        fprintf(stderr, "Cannot open/create file: %s\n", mirror_list);
+        exit(1);
+      }
+    }
+/* } */
+
 
 	/* Open mirror file. We pass argc so it can tell if we're updating
 	   or not */
 	mirror_p = select_mirror(mirror_list, argc);
 	if (mirror_p == NULL) {
 		perror("fopen");
-		fprintf(stderr, "Error opening mirror file. Exiting.\n");
+		fprintf(stderr, "Error opening mirror file.\nPerhaps your are missing the \"update\" parameter. Exiting.\n");
 		exit(1);
 	}
 
@@ -260,7 +269,7 @@ int main(int argc, char *argv[])
 	infile_p = select_infile(infile);
 	if (infile_p == NULL) {
 		perror("tmpfile");
-		fprintf(stderr, "Failed to open infile. Exiting.\n");
+		fprintf(stderr, "Error opening infile (%s). Exiting.\n", infile);
 		exit(1);
 	}
 
@@ -272,7 +281,7 @@ int main(int argc, char *argv[])
 	outfile_p = select_outfile(outfile);
 	if (outfile_p == NULL) {
 		perror("fopen");
-		fprintf(stderr, "Error opening output file. Exiting.\n");
+		fprintf(stderr, "Error opening output file (%s). Exiting.\n", outfile);
 		exit(1);
 	}
 
@@ -281,7 +290,7 @@ int main(int argc, char *argv[])
 		topfile_p = select_outfile(topfile);
 		if (topfile_p == NULL) {
 			perror("fopen");
-			fprintf(stderr, "Error opening topfile. Exiting.\n");
+			fprintf(stderr, "Error opening topfile (%s). Exiting.\n", topfile);
 			exit(1);
 		}
 	}
@@ -290,7 +299,7 @@ int main(int argc, char *argv[])
 	config_p = select_config(config_file);
 	if (config_p == NULL) {
 		perror("fopen");
-		fprintf(stderr, "Error opening config file. Exiting.\n");
+		fprintf(stderr, "Error opening config file (%s). Exiting.\n", config_file);
 		exit(1);
 	}
 

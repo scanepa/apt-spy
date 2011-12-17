@@ -255,15 +255,14 @@ int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 		while ((inputline = get_mirrors(mirror_list)) != NULL) {
 			if( ! isspace(*inputline)) {
 				fputs(inputline, infile_p);
-				free(inputline);
 
 				if (ferror(infile_p)) {
 					free(country_code);
 					return 1;
 				}
 			}
-
 		}
+    free(inputline);
 	}
 	free(country_code);
 
@@ -430,7 +429,7 @@ char *get_mirrors(FILE *mirror_list)
 	*creation++ = '\n';
 	*creation++ = '\0';
 
-	free(save_line);
+  free(save_line);
 
 	return save_creation;
 }
