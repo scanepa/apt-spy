@@ -1,6 +1,5 @@
 /*
  * apt-spy (c) Steven Holmes, 2003.
- * (c) Stefano Canepa <sc@linux.it>, 2008, 2009
  * This software is licensed as detailed in the COPYRIGHT file
  */
 
@@ -211,8 +210,12 @@ int backup(char *orig_file)
 
 	out_file = fopen(new_name, "w");
 
-	if (out_file == NULL)
+	if (out_file == NULL){
+    perror("fopen");
+    fclose(in_file);
+    free(new_name);
 		return 1;
+  }
 
 	/* Do the copying */
 	while((c = getc(in_file)) != EOF)
@@ -220,6 +223,9 @@ int backup(char *orig_file)
 
 	if (ferror(in_file) || ferror(out_file)) {
 		perror("putc");
+    fclose(in_file);
+    fclose(out_file);
+    free(new_name);
 		return 1;
 	}
 
