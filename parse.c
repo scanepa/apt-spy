@@ -172,7 +172,7 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 				/* split aliasList into token and concat them with the info
 				   extracted from inputline */
 				/* mirrorData contains all the line except the mirror name */
-				dirs = strstr(mirrorData, ":"); /* strtok(mirrorData, ":"); */
+				dirs = strstr(mirrorData, ":");
 				token = strtok(aliasList, ", ");
 
 				/* record this info into infile */
@@ -183,6 +183,7 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
 					strcat(dst, dirs);
 					fputs(dst, infile_p);
 					token = strtok(NULL, ", ");
+          free(dst);
 				}
 
 			}
@@ -204,66 +205,89 @@ int build_area_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
  * @return
  */
 int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_list,
-					   char *country_list)
+                       char *country_list)
 {
 	char *country_code;
-	char *p, *q;
 	char *inputline;
+  char *token;
+	int infilePos;
+	char *dirs;
+	char *aliasList;
+	char *dst;
+	char *mirrorData;
 
 	int found = 0;
 
 	/* Upper-case country list */
 	str_toupper(country_list);
 
-	/* A cheap way to make sure we have enough space */
-	country_code = malloc(strlen(country_list));
+	country_code = strtok(country_list,",");
 
-	p = country_list;
-
-	while (*p != '\0') {
-		/* Reset country code pointer */
-		q = country_code;
-
-		/* Skip white space */
-		while (isspace(*p))
-			++p;
-
-		/* Copy up until end or comma */
-		while ((*p != '\0') && (*p != ',') && (isspace(*p) == 0))
-			*q++ = *p++;
-
-		/* Skip more white space. *sigh* */
-		while (isspace(*p))
-			++p;
-
-		/* skip past comma */
-		if (*p != '\0')
-			++p;
-
-		/* String-ify */
-		*q++ = ' ';
-		*q = '\0';
+	while (country_code != NULL) {
 
 		/* And find the country/build the file */
 		if (find_country(mirror_list, country_code) == 1) {
 			fprintf(stderr, "Couldn't find country %s. Skipping.\n", country_code);
-			continue;
+      found = 0;
 		}
+    else {
+      found = 1;
+    }
 
-		found = 1;
+    if(found == 1) {
+      inputline = malloc(180);
 
-		while ((inputline = get_mirrors(mirror_list)) != NULL) {
-			if( ! isspace(*inputline)) {
-				fputs(inputline, infile_p);
+      while ((inputline = get_mirrors(mirror_list)) != NULL) {
 
-				if (ferror(infile_p)) {
-					free(country_code);
-					return 1;
-				}
-			}
-		}
-    free(inputline);
+        if (strstr(inputline, "  (") == NULL) {
+          infilePos = ftell(infile_p);
+          fputs(inputline, infile_p);
+
+          if (ferror(infile_p)) {
+            free(country_code);
+            free(inputline);
+            return 1;
+          }
+        }
+        else
+        {
+          /* go back one line in infile to delete the useless entry for
+             ftp.XX.debian.org */
+          fseek(infile_p, infilePos, SEEK_SET);
+          mirrorData = next_entry(infile_p);
+
+          /* create a copy of inputline with the list of real name of the
+             alias and trim leading and trailing space and parentesis from
+             inputline */
+          aliasList = trim(inputline,' ');
+          aliasList = ltrim(aliasList,'(');
+          aliasList = rtrim(aliasList,')');
+          /* split aliasList into token and concat them with the info
+             extracted from inputline */
+          /* mirrorData contains all the line except the mirror name */
+          dirs = strstr(mirrorData, ":");
+          token = strtok(aliasList, ", ");
+
+          /* record this info into infile */
+          while (token != NULL) {
+            dst = (char *)calloc(strlen(token) + strlen(mirrorData) + 1,
+                                 sizeof(char));
+            strcpy(dst, token);
+            strcat(dst, dirs);
+            fputs(dst, infile_p);
+            token = strtok(NULL, ", ");
+            printf ("--- %s\n", dst);
+            free(dst);
+          }
+        }
+      }
+      free(inputline);
+    }
+
+    country_code = strtok(NULL, ",");
+
 	}
+  /* end old while */
 	free(country_code);
 
 	/* Check we have found at least one country */
@@ -373,8 +397,8 @@ char *get_mirrors(FILE *mirror_list)
 	 * continue some way
 	 */
 	if (strstr(line, "  (")) {
-		free(line); /* we mustn't forget it */
-		return save_line;
+		/* free(save_line); *//* we mustn't forget it */
+		return line;
 	}
 
 	/*
@@ -454,7 +478,7 @@ void tokenise(server_t *current, char *cur_entry)
 		*temp++ = *cur_entry++;
 
 	*temp++ = '\0';		/* Turn into string */
-	current->hostname=realloc(current->hostname, 1+strlen(current->hostname));
+ 	current->hostname=realloc(current->hostname, 1+strlen(current->hostname));
 	if (!current->hostname) {
 		perror("realloc");
 		exit(1);
