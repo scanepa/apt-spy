@@ -1,5 +1,4 @@
 /* apt-spy (c) Steven Holmes, 2003.
- *         (c) Stefano Canepa <sc@linux.it> 2008,2009
  * This software is licensed as detailed in the COPYRIGHT file.
  */
 

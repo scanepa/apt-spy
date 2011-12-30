@@ -1,6 +1,5 @@
 /* 
  * apt-spy (c) Steven Holmes, 2003. 
- *         (c) Stefano Canepa <sc@linux.it> , 2008, 2009
  * This software is licensed as detailed in the COPYRIGHT file. 
  */
  
@@ -35,7 +34,6 @@ int build_country_file(FILE *config_p, FILE *infile_p, FILE *mirror_p,
 int find_country(FILE *mirror_list, char *country_code);
 void tokenise(server_t *current, char *cur_entry);
 char *get_mirrors(FILE *mirror_list);
-/*int write_list(FILE *outfile_p, server_t *best, char *dist); */
 int write_list(FILE *outfile_p, server_t *best, char *dist, char *section_list, char *args[], int l);
 int write_top(FILE *infile_p, FILE *outfile_p, server_t *best);
 
