@@ -1,3 +1,10 @@
+This repository is going to be abbandoned of even deleted. apt-spy development will continue on git.debian.org.
+
+http://anonscm.debian.org/gitweb/?p=collab-maint/apt-spy.git;a=summary
+
+---------------------------------------------------------------------------------------------------------------
+
+
 This version of apt-spy is by Steven Holmes <steg@bsdeviant.org>. The
 original was by Danny Rodriguez <messiah@optonline.net>. This is a complete
 re-write of the original.
